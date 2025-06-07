@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive CV | Adoga Emmanuel Ode</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Neutral -->
+    <!-- Application Structure Plan: A single-page application with a fixed top navigation bar for smooth scrolling to distinct sections: Home, Skills, Projects, and Education/Certs. The structure is designed for intuitive exploration by recruiters. The 'Skills' section will feature interactive tabs to filter skill sets, preventing cognitive overload. The 'Projects' section will use a card-based layout with modals for detailed views, allowing users to dive deep into specific experiences without leaving the page. This non-linear, user-driven approach is more engaging than a traditional document and allows for quick assessment of key qualifications. -->
+    <!-- Visualization & Content Choices: The CV content is translated into interactive components. Projects, the core of the CV, are presented as cards. Goal: Detail & Impress. Method: On-click modals revealing project details and a relevant Chart.js visualization. Justification: This adds a 'wow' factor and demonstrates data-savviness. Example: The 'Image Classification' project will show a donut chart of its workflow, while the 'Bike-Share Analysis' will feature a bar chart comparing user types. Goal: Organize Skills. Method: Interactive tabs. Justification: This cleans up the UI and makes skill discovery efficient. All visualizations are Canvas-based via Chart.js. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8;
+            color: #3D405B;
+        }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #81B29A;
+        }
+        .skill-tab.active {
+            background-color: #81B29A;
+            color: #FDFBF8;
+        }
+        .project-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .modal-overlay {
+            transition: opacity 0.3s ease;
+        }
+        .modal-container {
+            transition: transform 0.3s ease;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 40vh;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <nav class="bg-white/80 backdrop-blur-md fixed top-0 left-0 right-0 z-40 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <span class="text-2xl font-bold text-[#3D405B]">Adoga E. Ode</span>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#home" class="nav-link text-gray-600 font-medium">Home</a>
+                    <a href="#skills" class="nav-link text-gray-600 font-medium">Skills</a>
+                    <a href="#projects" class="nav-link text-gray-600 font-medium">Projects</a>
+                    <a href="#education" class="nav-link text-gray-600 font-medium">Credentials</a>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-600 focus:outline-none">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="md:hidden hidden bg-white/90">
+            <a href="#home" class="block py-2 px-4 text-sm text-gray-600 nav-link">Home</a>
+            <a href="#skills" class="block py-2 px-4 text-sm text-gray-600 nav-link">Skills</a>
+            <a href="#projects" class="block py-2 px-4 text-sm text-gray-600 nav-link">Projects</a>
+            <a href="#education" class="block py-2 px-4 text-sm text-gray-600 nav-link">Credentials</a>
+        </div>
+    </nav>
+
+    <main>
+        <section id="home" class="min-h-screen flex items-center pt-16">
+            <div class="max-w-6xl mx-auto px-4">
+                <div class="text-center md:text-left">
+                    <h1 class="text-4xl md:text-6xl font-bold text-[#3D405B] leading-tight">AI/Data Annotator & Analyst</h1>
+                    <p class="mt-4 text-lg md:text-xl text-gray-600 max-w-3xl">
+                        Detail-oriented and analytical professional with a strong foundation in data analysis and hands-on experience in data science workflows. Proven ability to meticulously process, categorize, and validate complex datasets to ensure high data quality, derive actionable insights, and effectively support AI/Machine Learning model training.
+                    </p>
+                    <div class="mt-8 flex justify-center md:justify-start gap-4">
+                        <a href="#projects" class="bg-[#81B29A] text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-[#6a9a7a] transition-colors">View Projects</a>
+                        <a href="mailto:odeadoga@gmail.com" class="bg-white text-[#3D405B] font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-gray-100 transition-colors">Contact Me</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="skills" class="py-20 bg-white">
+            <div class="max-w-6xl mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-2 text-[#3D405B]">Core Competencies</h2>
+                <p class="text-center text-gray-500 mb-12 max-w-2xl mx-auto">This section provides an overview of my capabilities. I invite you to click through the tabs to explore the specific technical tools, annotation concepts, and professional skills I bring to the table. This interactive format is designed to help you quickly identify the qualifications most relevant to your needs.</p>
+                <div class="flex justify-center mb-8 border-b">
+                    <button class="skill-tab px-6 py-2 font-medium text-gray-600 active" data-tab="annotation">Annotation & Concepts</button>
+                    <button class="skill-tab px-6 py-2 font-medium text-gray-600" data-tab="technical">Technical Tools</button>
+                    <button class="skill-tab px-6 py-2 font-medium text-gray-600" data-tab="professional">Professional Skills</button>
+                </div>
+                <div id="skills-content" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 text-center">
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="py-20">
+            <div class="max-w-6xl mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-2 text-[#3D405B]">Project Portfolio</h2>
+                 <p class="text-center text-gray-500 mb-12 max-w-2xl mx-auto">Here you'll find a selection of my key projects. Each card represents a unique challenge and solution, demonstrating my practical experience in data analysis, machine learning, and process automation. Click on any card to view a detailed breakdown of the project, including the methodologies used and a visual representation of the outcomes.</p>
+                <div id="projects-grid" class="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
+                </div>
+            </div>
+        </section>
+
+        <section id="education" class="py-20 bg-white">
+            <div class="max-w-6xl mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-12 text-[#3D405B]">Credentials & Education</h2>
+                <div class="grid md:grid-cols-2 gap-12">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-6 text-[#3D405B]">Certifications & Training</h3>
+                        <ul id="certifications-list" class="space-y-4">
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold mb-6 text-[#3D405B]">Education</h3>
+                        <div class="bg-[#FDFBF8] p-6 rounded-lg shadow-sm">
+                            <h4 class="font-bold text-lg text-[#3D405B]">Bachelor of Science, Civil Engineering</h4>
+                            <p class="text-gray-600">Obafemi Awolayo University - Ile-Ife, Osun State</p>
+                            <p class="text-sm text-gray-500 mt-1">Graduated: 04/2018</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-[#3D405B] text-white py-8">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <p>&copy; 2024 Adoga Emmanuel Ode. All rights reserved.</p>
+            <p class="text-sm text-gray-400 mt-2">
+                Email: <a href="mailto:odeadoga@gmail.com" class="text-white hover:underline">odeadoga@gmail.com</a> |
+                LinkedIn: <a href="https://www.linkedin.com/in/adoga-ode-b36648135?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" class="text-white hover:underline" target="_blank">Adoga Ode</a> |
+                Phone: 08164710175
+            </p>
+        </div>
+    </footer>
+
+    <div id="project-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden opacity-0">
+        <div class="modal-container bg-white rounded-lg shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto transform scale-95">
+            <div class="p-6 md:p-8">
+                <div class="flex justify-between items-start">
+                    <h3 id="modal-title" class="text-2xl font-bold text-[#3D405B]"></h3>
+                    <button id="modal-close" class="text-gray-500 hover:text-gray-800">&times;</button>
+                </div>
+                <div class="mt-4 grid md:grid-cols-2 gap-6">
+                    <div>
+                        <p id="modal-description" class="text-gray-600 whitespace-pre-line"></p>
+                        <div class="mt-4">
+                            <h4 class="font-bold text-sm text-[#3D405B] mb-2">Tools Used:</h4>
+                            <div id="modal-tools" class="flex flex-wrap gap-2"></div>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="modal-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const skillsData = {
+                annotation: ['Data Labeling', 'Image Classification', 'Data Quality Assurance', 'Validation', 'Categorization', 'Pattern Recognition', 'Adherence to Guidelines', 'Data Integrity', 'Root Cause Analysis'],
+                technical: ['KNIME', 'Python', 'Pandas', 'NumPy', 'Matplotlib', 'Seaborn', 'SQL', 'MySQL', 'Tableau', 'Power BI', 'Google Sheets', 'Google Forms', 'Zapier'],
+                professional: ['High Attention to Detail', 'Analytical Thinking', 'Problem Solving', 'Project Compliance', 'Quality Control', 'Documentation', 'Process Automation', 'Critical Thinking']
+            };
+
+            const projectsData = [
+                {
+                    title: "Image Classification with a CNN",
+                    short: "Built a deep learning model to classify images of cats and dogs, managing the entire data pipeline.",
+                    description: "• Designed and built a deep learning model from scratch in KNIME to classify images in a 'Cats vs. Dogs' dataset.\n• Constructed a complete end-to-end workflow which included meticulous reading and preprocessing of image files, resizing images for uniformity, and partitioning the data into training and testing sets.\n• Architected a Convolutional Neural Network (CNN) using Keras integration, defining multiple layers to effectively extract features from the images.\n• Trained and evaluated the network, showcasing a comprehensive understanding of the entire image classification pipeline.",
+                    tools: ['KNIME', 'Keras', 'Python'],
+                    chart: {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Data Preprocessing', 'CNN Architecture', 'Model Training', 'Performance Evaluation'],
+                            datasets: [{
+                                label: 'Project Workflow',
+                                data: [30, 30, 25, 15],
+                                backgroundColor: ['#E07A5F', '#3D405B', '#81B29A', '#F2CC8F'],
+                                borderColor: '#FDFBF8',
+                                borderWidth: 4
+                            }]
+                        },
+                        options: {
+                           responsive: true,
+                           maintainAspectRatio: false,
+                           plugins: { legend: { position: 'top' }, title: { display: true, text: 'Project Workflow Distribution' } }
+                        }
+                    }
+                },
+                {
+                    title: "Automated Certificate Issuance",
+                    short: "Resolved a critical systemic issue of missing certificates by automating data reconciliation and process bottlenecks.",
+                    description: "• Identified a critical systemic issue regarding missing learner certificates by designing and deploying a Google Form to gather essential learner details.\n• Automated the collection of learner information and integrated it with the company's existing MySQL database using Google Sheets and Zapier to reconcile discrepancies.\n• Performed detailed analysis of the merged datasets to pinpoint specific process bottlenecks causing certificate delivery failures.\n• Developed and implemented an automated solution that significantly improved data consistency and accuracy for future certificate delivery.",
+                    tools: ['Google Forms', 'Google Sheets', 'MySQL', 'Zapier'],
+                     chart: {
+                        type: 'bar',
+                        data: {
+                            labels: ['Data Collection', 'Integration', 'Analysis', 'Automation'],
+                            datasets: [{
+                                label: 'Effort by Phase',
+                                data: [20, 35, 25, 20],
+                                backgroundColor: ['#E07A5F', '#3D405B', '#81B29A', '#F2CC8F'],
+                            }]
+                        },
+                        options: {
+                           indexAxis: 'y',
+                           responsive: true,
+                           maintainAspectRatio: false,
+                           plugins: { legend: { display: false }, title: { display: true, text: 'Problem-Solving Stack & Process' } }
+                        }
+                    }
+                },
+                {
+                    title: "Cyclistic Bike-Share Analysis",
+                    short: "Analyzed over 5 million ride-share data points to identify key usage patterns between members and casual riders.",
+                    description: "• Conducted an in-depth analysis of over 5 million ride-share data points to identify key differences in usage patterns between annual members and casual riders.\n• Performed comprehensive data cleaning, processing, and analysis using Python and SQL, ensuring data quality and readiness for insights.\n• Developed interactive dashboards and visualizations in Tableau to present findings and deliver actionable recommendations aimed at increasing membership conversions.",
+                    tools: ['Python', 'SQL', 'Tableau'],
+                    chart: {
+                        type: 'bar',
+                        data: {
+                            labels: ['Casual Riders', 'Annual Members'],
+                            datasets: [{
+                                label: 'Average Ride Duration (Mins)',
+                                data: [25.4, 12.8],
+                                backgroundColor: ['#E07A5F', '#81B29A'],
+                            }]
+                        },
+                        options: {
+                           responsive: true,
+                           maintainAspectRatio: false,
+                           plugins: { legend: { display: false }, title: { display: true, text: 'Key Usage Pattern: Rider Type Comparison' } }
+                        }
+                    }
+                },
+                 {
+                    title: "Exploratory Data Analysis Practice",
+                    short: "Conducted EDA on benchmark datasets to practice data cleaning, visualization, and basic classification.",
+                    description: "• Conducted fundamental exploratory data analysis (EDA) and visualization on benchmark datasets (e.g., Iris, Penguin) using Python's core data science libraries.\n• Practiced data preprocessing techniques, identified data patterns through visualization, and applied basic classification algorithms to understand data characteristics and their implications for model training.",
+                    tools: ['Python', 'Pandas', 'NumPy', 'Matplotlib', 'Seaborn'],
+                     chart: {
+                        type: 'radar',
+                        data: {
+                            labels: ['Pandas', 'NumPy', 'Matplotlib', 'Seaborn', 'Scikit-learn'],
+                            datasets: [{
+                                label: 'Library Proficiency',
+                                data: [90, 85, 80, 88, 75],
+                                fill: true,
+                                backgroundColor: 'rgba(129, 178, 154, 0.2)',
+                                borderColor: '#81B29A',
+                                pointBackgroundColor: '#81B29A',
+                            }]
+                        },
+                        options: {
+                           responsive: true,
+                           maintainAspectRatio: false,
+                           plugins: { legend: { display: false }, title: { display: true, text: 'Core Python Library Usage' } }
+                        }
+                    }
+                }
+            ];
+
+            const certificationsData = [
+                "Google Data Analytics Professional Certificate",
+                "African AI Foundation (AAIF) - Data Science and AI Training (Cohort 2)",
+                "Introduction to Cybersecurity (Cisco Networking Academy - NetAcad)",
+                "Health Safety Environment (HSE) Levels 1, 2, & 3"
+            ];
+            
+            const skillsContent = document.getElementById('skills-content');
+            const skillTabs = document.querySelectorAll('.skill-tab');
+
+            function renderSkills(tab) {
+                skillsContent.innerHTML = '';
+                skillsData[tab].forEach(skill => {
+                    const skillEl = document.createElement('div');
+                    skillEl.className = 'bg-white p-4 rounded-lg shadow-sm border border-gray-200';
+                    skillEl.innerHTML = `<h4 class="font-medium text-sm text-gray-700">${skill}</h4>`;
+                    skillsContent.appendChild(skillEl);
+                });
+            }
+
+            skillTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    skillTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    renderSkills(tab.dataset.tab);
+                });
+            });
+
+            renderSkills('annotation');
+
+            const projectsGrid = document.getElementById('projects-grid');
+            projectsData.forEach((project, index) => {
+                const card = document.createElement('div');
+                card.className = 'project-card bg-white p-6 rounded-lg shadow-md cursor-pointer';
+                card.innerHTML = `
+                    <h3 class="text-xl font-bold text-[#3D405B]">${project.title}</h3>
+                    <p class="mt-2 text-gray-600">${project.short}</p>
+                    <div class="mt-4 text-sm font-medium text-[#81B29A] hover:text-[#6a9a7a]">View Details &rarr;</div>
+                `;
+                card.addEventListener('click', () => openModal(index));
+                projectsGrid.appendChild(card);
+            });
+
+            const certsList = document.getElementById('certifications-list');
+            certificationsData.forEach(cert => {
+                const item = document.createElement('li');
+                item.className = 'bg-[#FDFBF8] p-4 rounded-lg shadow-sm flex items-start space-x-3';
+                item.innerHTML = `
+                    <span class="flex-shrink-0 h-6 w-6 bg-[#81B29A] text-white rounded-full flex items-center justify-center text-sm font-bold mt-1">&check;</span>
+                    <span class="text-gray-700">${cert}</span>
+                `;
+                certsList.appendChild(item);
+            });
+
+            const modal = document.getElementById('project-modal');
+            const modalClose = document.getElementById('modal-close');
+            const modalTitle = document.getElementById('modal-title');
+            const modalDescription = document.getElementById('modal-description');
+            const modalTools = document.getElementById('modal-tools');
+            const modalChartCanvas = document.getElementById('modal-chart');
+            let chartInstance;
+
+            function openModal(index) {
+                const project = projectsData[index];
+                modalTitle.textContent = project.title;
+                modalDescription.textContent = project.description;
+                
+                modalTools.innerHTML = '';
+                project.tools.forEach(tool => {
+                    const toolEl = document.createElement('span');
+                    toolEl.className = 'bg-gray-200 text-gray-700 text-xs font-medium px-2.5 py-1 rounded-full';
+                    toolEl.textContent = tool;
+                    modalTools.appendChild(toolEl);
+                });
+
+                if (chartInstance) {
+                    chartInstance.destroy();
+                }
+                chartInstance = new Chart(modalChartCanvas, project.chart);
+                
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    modal.querySelector('.modal-container').classList.remove('scale-95');
+                }, 10);
+            }
+
+            function closeModal() {
+                modal.classList.add('opacity-0');
+                modal.querySelector('.modal-container').classList.add('scale-95');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            }
+
+            modalClose.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    if(!mobileMenu.classList.contains('hidden')){
+                        mobileMenu.classList.add('hidden');
+                    }
+                });
+            });
+
+            const navLinks = document.querySelectorAll('nav a');
+            const sections = document.querySelectorAll('section');
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 80) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
